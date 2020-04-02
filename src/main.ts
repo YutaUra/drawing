@@ -11,6 +11,8 @@ import VueKonva from 'vue-konva'
 
 const HASURA_TOKEN_KEY = 'https://hasura.io/jwt/claims'
 
+console.log('Hello PictLink')
+
 Vue.use(VueApollo)
 Vue.use(VueKonva)
 
