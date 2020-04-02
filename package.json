@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "generate": "graphql-codegen --config codegen.js"
+    "generate": "graphql-codegen --config codegen.js",
+    "start": "node server.js"
   },
   "dependencies": {
     "apollo-cache-inmemory": "^1.6.5",
@@ -16,6 +17,7 @@
     "apollo-link-http": "^1.5.16",
     "apollo-link-ws": "^1.0.19",
     "core-js": "^3.6.4",
+    "express": "^4.17.1",
     "firebase": "^7.13.1",
     "firebase-admin": "^8.10.0",
     "firebaseui": "^4.5.0",

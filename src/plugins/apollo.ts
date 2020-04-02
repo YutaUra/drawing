@@ -66,7 +66,7 @@ export async function onLogin(token: string) {
     client.stop()
     await client.resetStore()
   } catch (e) {
-    console.error(`Login Failed. ${e}`)
+    // console.error(`Login Failed. ${e}`)
   }
 }
 
@@ -79,7 +79,7 @@ export async function onLogout() {
     client.stop()
     await client.resetStore()
   } catch (e) {
-    console.error(`Logout Failed. ${e}`)
+    // console.error(`Logout Failed. ${e}`)
   }
 }
 
