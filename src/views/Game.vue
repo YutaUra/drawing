@@ -1,6 +1,9 @@
 <template>
   <v-container style="height: 90%;">
-    <v-row style="height: 100%; max-height: 380px" class="flex-column">
+    <v-row
+      style="height: 100%; max-height: calc(400px + 30px)"
+      class="flex-column"
+    >
       <v-col cols="1" style="min-width: 100%;">
         <span class="title">Game</span>
         <span class="caption pl-1">
@@ -14,7 +17,7 @@
           @change="change($event)"
           :clear="isClear"
           :disable="disable"
-          style="height: 100%; max-height: 350px"
+          style="height: 100%; max-height: 400px"
         />
       </v-col>
     </v-row>
@@ -25,11 +28,11 @@
         </v-btn>
       </v-col>
     </v-row>
-    <v-row style="height: 100%; max-height: 350px">
+    <v-row style="height: 100%; max-height: 400px">
       <v-col>
         <palette-view
           :lines="jsonDataParsed"
-          style="height: 100%; max-height: 350px"
+          style="height: 100%; max-height: 400px"
         />
       </v-col>
     </v-row>
