@@ -1,8 +1,8 @@
 <template>
-  <v-container>
-    <v-row>
+  <v-container style="height: 90%;">
+    <v-row style="height: 100%; max-height: calc(400px)" class="flex-column">
       <v-col cols="12">
-        <palette @change="change" />
+        <palette style="height: 100%; max-height: 400px" @change="change" />
       </v-col>
     </v-row>
     <v-row class="px-4" align-content="center">
