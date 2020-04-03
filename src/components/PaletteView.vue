@@ -14,7 +14,7 @@
       class="elevation-3"
     >
       <v-layer ref="layer">
-        <v-line v-for="(conf, i) in lines" :key="i" :config="conf" />
+        <v-line v-for="(conf, i) in calcLines" :key="i" :config="conf" />
       </v-layer>
     </v-stage>
   </div>
@@ -32,6 +32,14 @@ export default class PaletteView extends Vue {
   @Prop({ default: [] })
   lines!: LineConfig[]
 
+  get calcLines() {
+    return this.lines.map(conf => {
+      return Object.assign({}, conf, {
+        points: conf.points.map(v => (v * this.size.width) / 1000)
+      })
+    })
+  }
+
   // eslint-disable-next-line
   size: { width: number; height: number } = {} as any
 
@@ -41,10 +49,10 @@ export default class PaletteView extends Vue {
   }
 
   resize() {
-    const m = Math.min(this.root.clientHeight, this.root.clientWidth)
+    const m = Math.min(this.root.clientHeight, this.root.clientWidth) * 0.95
     this.size = {
-      width: m * 0.95,
-      height: m * 0.95
+      width: m,
+      height: m
     }
   }
 

@@ -5,6 +5,11 @@
         <palette style="height: 100%; max-height: 400px" @change="change" />
       </v-col>
     </v-row>
+    <v-row style="height: 100%; max-height: calc(400px)" class="flex-column">
+      <v-col cols="12">
+        <palette-view :lines="lines" style="height: 100%; max-height: 300px" />
+      </v-col>
+    </v-row>
     <v-row class="px-4" align-content="center">
       <v-col cols="8" sm="6"> <v-text-field v-model="title" /> </v-col>
       <v-col cols="4" sm="6" style="text-align: center;">
@@ -29,16 +34,21 @@ import gql from 'graphql-tag'
 
 @Component({
   components: {
-    Palette: () => import('@/components/Palette.vue')
+    Palette: () => import('@/components/Palette.vue'),
+    PaletteView: () => import('@/components/PaletteView.vue')
   }
 })
 export default class Playground extends Vue {
   $store!: ExStore
 
-  json = ''
+  json = '[]'
   dataUrl = ''
   title = ''
   loading = false
+
+  get lines() {
+    return JSON.parse(this.json)
+  }
 
   change(event: Event) {
     // eslint-disable-next-line

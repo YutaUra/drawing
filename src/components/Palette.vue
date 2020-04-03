@@ -1,12 +1,5 @@
 <template>
-  <div
-    ref="root"
-    @mousedown.prevent
-    @mousemove.prevent
-    @touchstart.prevent
-    @touchmove.prevent
-    class="text-center"
-  >
+  <div ref="root" class="text-center">
     <v-stage
       :config="size"
       ref="stage"
@@ -39,6 +32,30 @@ export default class Palette extends Vue {
 
   @Prop({ default: false })
   clear!: boolean
+  @Watch('clear')
+  clearChange(v: boolean) {
+    if (v) this.lines = []
+  }
+
+  @Prop({ default: false })
+  back!: boolean
+  @Watch('back')
+  backChange(v: boolean) {
+    if (v) {
+      const r = this.lines.pop()
+      if (r) this.backed.push(r)
+    }
+  }
+
+  @Prop({ default: false })
+  forward!: boolean
+  @Watch('forward')
+  forwardChange(v: boolean) {
+    if (v) {
+      const r = this.backed.pop()
+      if (r) this.lines.push(r)
+    }
+  }
 
   @Prop({ default: false })
   disable!: boolean
@@ -47,8 +64,10 @@ export default class Palette extends Vue {
   // eslint-disable-next-line
   lastLine: LineConfig = {} as any
   lines: LineConfig[] = []
+  backed: LineConfig[] = []
   // eslint-disable-next-line
   size: { width: number; height: number } = {} as any
+  updateCount = 0
 
   get mode() {
     return this.$store.state.brush.mode
@@ -83,18 +102,32 @@ export default class Palette extends Vue {
     }
   }
 
+  async prev(e: TouchEvent) {
+    if (e.touches.length === 1 && e.cancelable) {
+      e.preventDefault()
+    }
+  }
+
   mounted() {
     this.resize()
     window.addEventListener('resize', this.resize)
+    this.stage.content.addEventListener('touchstart', e => this.prev(e), {
+      passive: false
+    })
+    // this.stage.content.addEventListener('touchmove', e => this.prev(e), {
+    //   passive: false
+    // })
   }
 
   beforeDestroy() {
     window.removeEventListener('resize', this.resize)
   }
 
-  drawStart() {
+  drawStart(e: TouchEvent | Event) {
+    if (this.isTouchEvent(e) && e.touches.length > 1) return
     if (this.disable) return
     this.isPaint = true
+    this.updateCount = 0
     const pos = this.stage.getPointerPosition()
     if (!pos) return
 
@@ -105,6 +138,7 @@ export default class Palette extends Vue {
       points: [pos.x, pos.y]
     }
     this.lines.push(this.lastLine)
+    this.backed = []
   }
 
   drawEnd() {
@@ -113,7 +147,20 @@ export default class Palette extends Vue {
     this.$emit('change', { json: this.toJSON(), dataUrl: this.toDataUrl() })
   }
 
-  draw() {
+  get normalizedLines(): LineConfig[] {
+    return this.lines.map(conf => {
+      return Object.assign({}, conf, {
+        points: conf.points.map(v => (v * 1000) / this.size.width)
+      })
+    })
+  }
+
+  isTouchEvent(e: Event | TouchEvent): e is TouchEvent {
+    return e instanceof TouchEvent
+  }
+
+  draw(e: TouchEvent | Event) {
+    if (this.isTouchEvent(e) && e.touches.length !== 1) return
     if (this.disable) return
     if (!this.isPaint) return
 
@@ -122,6 +169,11 @@ export default class Palette extends Vue {
     const newPoints = this.lastLine.points.concat([pos.x, pos.y])
     this.lastLine.points = newPoints
     this.layer.batchDraw()
+    if (this.updateCount % 30 === 0) {
+      console.log('update')
+      this.$emit('change', { json: this.toJSON(), dataUrl: this.toDataUrl() })
+    }
+    this.updateCount++
   }
 
   @Watch('lines')
@@ -129,15 +181,8 @@ export default class Palette extends Vue {
     this.$emit('change', { json: this.toJSON(), dataUrl: this.toDataUrl() })
   }
 
-  @Watch('clear')
-  clearChange(newValue: boolean) {
-    if (newValue) {
-      this.lines = []
-    }
-  }
-
   toJSON() {
-    return JSON.stringify(this.lines)
+    return JSON.stringify(this.normalizedLines)
   }
 
   toDataUrl() {

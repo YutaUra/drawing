@@ -122,10 +122,10 @@ export default class Game extends Vue {
   // eslint-disable-next-line
   game: Picture_Game = {} as any
 
-  clear() {
+  async clear() {
     this.isClear = true
-    setTimeout(() => (this.isClear = false), 300)
-    console.log(this.isClear)
+    await this.$nextTick()
+    this.isClear = false
   }
 
   change(event: Event & { json: string; dataUrl: string }) {
