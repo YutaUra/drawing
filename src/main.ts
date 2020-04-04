@@ -20,7 +20,7 @@ Vue.config.productionTip = false
 
 let vue: Vue
 // firebaseの初期化が終わったあとにVueを初期化するようにする
-auth.onAuthStateChanged(async user => {
+auth.onAuthStateChanged(async (user) => {
   if (user) {
     const token = await user.getIdToken(true)
     const idTokenResult = await user.getIdTokenResult()
@@ -45,7 +45,7 @@ auth.onAuthStateChanged(async user => {
       apolloProvider,
       router,
       store,
-      render: h => h(App)
+      render: (h) => h(App)
     }).$mount('#app')
   }
 })

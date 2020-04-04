@@ -17,6 +17,12 @@ const routes = [
     meta: { requireAuth: true }
   },
   {
+    path: '/test',
+    name: 'test',
+    component: () => import('@/views/Test.vue')
+    // meta: { requireAuth: true }
+  },
+  {
     path: '/playground',
     name: 'playground',
     component: () => import('@/views/Playground.vue')
@@ -72,7 +78,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, _from, next) => {
-  const requireAuth = to.matched.some(record => record.meta.requireAuth)
+  const requireAuth = to.matched.some((record) => record.meta.requireAuth)
   const currentUser = auth.currentUser
 
   if (!requireAuth || currentUser) {

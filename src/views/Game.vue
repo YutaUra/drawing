@@ -1,9 +1,6 @@
 <template>
   <v-container style="height: 90%;">
-    <v-row
-      style="height: 100%; max-height: calc(400px + 30px)"
-      class="flex-column"
-    >
+    <v-row class="flex-column">
       <v-col cols="1" style="min-width: 100%;">
         <span class="title">Game</span>
         <span class="caption pl-1">
@@ -15,24 +12,59 @@
       <v-col>
         <palette
           @change="change($event)"
-          :clear="isClear"
+          :clear="clear"
+          @clear="clear = $event"
+          :back="back"
+          @back="back = $event"
+          :forward="forward"
+          @forward="forward = $event"
           :disable="disable"
-          style="height: 100%; max-height: 400px"
+          :cache="true"
+          :cacheKey="`game-${gameId}-cache`"
         />
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="3" class="text-center">
-        <v-btn small @click="clear">
-          リセット
+      <v-col cols="3" sm="1" class="text-center">
+        <v-btn small @click="clear = true">
+          <v-icon>mdi-new-box</v-icon>
+        </v-btn>
+      </v-col>
+      <v-col cols="3" sm="1" class="text-center">
+        <v-btn small @click="back = true">
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
+      </v-col>
+      <v-col cols="3" sm="1" class="text-center">
+        <v-btn small @click="forward = true">
+          <v-icon>mdi-arrow-right</v-icon>
+        </v-btn>
+      </v-col>
+      <v-col cols="3" sm="1" class="text-center">
+        <v-btn
+          small
+          @click="sizeRatioChange(-0.05)"
+          :disabled="sizeRatio <= 0.2"
+        >
+          <v-icon>mdi-minus</v-icon>
+        </v-btn>
+      </v-col>
+      <v-col cols="3" sm="1" class="text-center">
+        <v-btn
+          small
+          @click="sizeRatioChange(0.05)"
+          :disabled="sizeRatio >= 0.95"
+        >
+          <v-icon>mdi-plus</v-icon>
         </v-btn>
       </v-col>
     </v-row>
-    <v-row style="height: 100%; max-height: 400px">
+    <v-row>
       <v-col>
         <palette-view
-          :lines="jsonDataParsed"
-          style="height: 100%; max-height: 400px"
+          :propLines="jsonDataParsed"
+          :propSync="true"
+          :sizeRatio="sizeRatio"
         />
       </v-col>
     </v-row>
@@ -45,6 +77,7 @@ import gql from 'graphql-tag'
 // eslint-disable-next-line
 import { Picture_Game_History, Picture_Game } from '../generated/graphql'
 import { auth } from '../plugins/firebase'
+import { round } from '../util/palette/lines'
 
 @Component({
   components: {
@@ -98,9 +131,16 @@ export default class Game extends Vue {
 
   jsonData = '[]'
   dataUrl = ''
-  isClear = false
+  clear = false
+  back = false
+  forward = false
+  sizeRatio = 0.95
   create = true
   currentPictureId = ''
+
+  sizeRatioChange(diff: number) {
+    this.sizeRatio = round(this.sizeRatio + diff, 2)
+  }
 
   get disable() {
     if (!this.game.drawing_user_user) return true
@@ -113,7 +153,7 @@ export default class Game extends Vue {
   // eslint-disable-next-line
   get lastHistory(): Picture_Game_History {
     return this.histories
-      .filter(hist => {
+      .filter((hist) => {
         if (!auth.currentUser) return false
         return hist.picture.user.id != auth.currentUser.uid
       })
@@ -121,12 +161,6 @@ export default class Game extends Vue {
   }
   // eslint-disable-next-line
   game: Picture_Game = {} as any
-
-  async clear() {
-    this.isClear = true
-    await this.$nextTick()
-    this.isClear = false
-  }
 
   change(event: Event & { json: string; dataUrl: string }) {
     this.jsonData = event.json
