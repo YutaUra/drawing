@@ -28,6 +28,9 @@ export default class CachePaletteMixin extends DataPaletteMixin {
       window.addEventListener('beforeunload', () => {
         localStorage.setItem(this.cacheKey, this.normalizedJson())
       })
+      window.addEventListener('pagehide', () => {
+        localStorage.setItem(this.cacheKey, this.normalizedJson())
+      })
     }
   }
 }
