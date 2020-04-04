@@ -19,38 +19,44 @@ const routes = [
   {
     path: '/test',
     name: 'test',
-    component: () => import('@/views/Test.vue')
-    // meta: { requireAuth: true }
+    component: () => import('@/views/Test.vue'),
+    meta: { requireAuth: true }
   },
   {
     path: '/playground',
     name: 'playground',
-    component: () => import('@/views/Playground.vue')
-    // meta: { requireAuth: true }
+    component: () => import('@/views/Playground.vue'),
+    meta: { requireAuth: true }
   },
   {
     path: '/create/room',
     name: 'CreateRoom',
-    component: () => import('@/views/CreateRoom.vue')
-    // meta: { requireAuth: true }
+    component: () => import('@/views/CreateRoom.vue'),
+    meta: { requireAuth: true }
   },
   {
     path: '/search/room',
     name: 'SearchRoom',
-    component: () => import('@/views/SearchRoom.vue')
-    // meta: { requireAuth: true }
+    component: () => import('@/views/SearchRoom.vue'),
+    meta: { requireAuth: true }
+  },
+  {
+    path: '/myroom',
+    name: 'MyRoom',
+    component: () => import('@/views/MyRoom.vue'),
+    meta: { requireAuth: true }
   },
   {
     path: '/room/:id',
     name: 'Room',
-    component: () => import('@/views/Room.vue')
-    // meta: { requireAuth: true }
+    component: () => import('@/views/Room.vue'),
+    meta: { requireAuth: true }
   },
   {
     path: '/game/:id',
     name: 'Game',
-    component: () => import('@/views/Game.vue')
-    // meta: { requireAuth: true }
+    component: () => import('@/views/Game.vue'),
+    meta: { requireAuth: true }
   },
   {
     path: '/canvas',

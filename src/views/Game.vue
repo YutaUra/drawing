@@ -91,6 +91,8 @@ import { round } from '../util/palette/lines'
           subscription SUBSCRIBE_DRAW_HISTORY($id: uuid!) {
             game: picture_game_by_pk(id: $id) {
               id
+              owner
+              participant
               drawing_user_user {
                 id
                 name
@@ -121,6 +123,15 @@ import { round } from '../util/palette/lines'
         result(res: { data: { game: Picture_Game } }) {
           this.histories = res.data.game.picture_game_histories
           this.game = res.data.game
+          if (
+            res.data.game.owner !== this.uid &&
+            res.data.game.participant !== this.uid
+          ) {
+            console.log(res.data.game)
+            console.log(this.uid)
+
+            this.$router.push({ name: 'MyRoom' })
+          }
         }
       }
     }
@@ -137,6 +148,21 @@ export default class Game extends Vue {
   sizeRatio = 0.95
   create = true
   currentPictureId = ''
+  // eslint-disable-next-line
+  game: Picture_Game = {} as any
+  // eslint-disable-next-line
+  histories: Picture_Game_History[] = []
+
+  created() {
+    if (localStorage.getItem(`game-${this.gameId}-cache`)) {
+      this.create = false
+    }
+  }
+
+  get uid() {
+    if (auth.currentUser) return auth.currentUser.uid
+    return ''
+  }
 
   sizeRatioChange(diff: number) {
     this.sizeRatio = round(this.sizeRatio + diff, 2)
@@ -148,8 +174,7 @@ export default class Game extends Vue {
     // return this.game.drawing_user_user.id != auth.currentUser.uid
     return false
   }
-  // eslint-disable-next-line
-  histories: Picture_Game_History[] = []
+
   // eslint-disable-next-line
   get lastHistory(): Picture_Game_History {
     return this.histories
@@ -159,8 +184,6 @@ export default class Game extends Vue {
       })
       .slice(-1)[0]
   }
-  // eslint-disable-next-line
-  game: Picture_Game = {} as any
 
   change(event: Event & { json: string; dataUrl: string }) {
     this.jsonData = event.json

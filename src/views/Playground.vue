@@ -7,7 +7,11 @@
     </v-row>
     <v-row style="height: 100%; max-height: calc(400px)" class="flex-column">
       <v-col cols="12">
-        <palette-view :lines="lines" style="height: 100%; max-height: 300px" />
+        <palette-view
+          :propLines="lines"
+          :propSync="true"
+          style="height: 100%; max-height: 300px"
+        />
       </v-col>
     </v-row>
     <v-row class="px-4" align-content="center">
@@ -50,11 +54,9 @@ export default class Playground extends Vue {
     return JSON.parse(this.json)
   }
 
-  change(event: Event) {
-    // eslint-disable-next-line
-    this.json = (event as any).json
-    // eslint-disable-next-line
-    this.dataUrl = (event as any).dataUrl
+  change(event: Event & { json: string; dataUrl: string }) {
+    this.json = event.json
+    this.dataUrl = event.dataUrl
   }
 
   async save() {

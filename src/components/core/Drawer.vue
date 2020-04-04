@@ -87,7 +87,8 @@ export default Vue.extend({
           icon: 'mdi-image-frame',
           lists: [
             { title: '部屋を作成', to: { name: 'CreateRoom' } },
-            { title: '部屋に参加', to: { name: 'SearchRoom' } }
+            { title: '部屋に参加', to: { name: 'SearchRoom' } },
+            { title: '参加している部屋', to: { name: 'MyRoom' } }
           ]
         }
       ]
