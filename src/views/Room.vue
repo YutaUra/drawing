@@ -16,6 +16,14 @@
       <v-col class="subtitle-1">参加者はまだいません</v-col>
     </v-row>
     <v-row>
+      <v-col v-if="!room.participant_user && room.use_pass">
+        <v-text-field
+          label="パスフレーズ"
+          placeholder="0000"
+          type="number"
+          v-model="pass"
+        />
+      </v-col>
       <v-col class="text-center">
         <v-btn
           v-if="isOwner"
@@ -57,6 +65,7 @@ import { ExStore } from 'vuex'
 import { Picture_Game } from '../generated/graphql'
 import gql from 'graphql-tag'
 import { auth } from '@/plugins/firebase'
+import { sha256 } from 'js-sha256'
 
 @Component({
   apollo: {
@@ -108,6 +117,7 @@ export default class Room extends Vue {
   loading = false
   snackbar = false
   text = ''
+  pass = ''
 
   get roomId() {
     return this.$route.params.id
@@ -143,24 +153,58 @@ export default class Room extends Vue {
   async joinRoom() {
     this.loading = true
     try {
-      await this.$apollo.mutate({
-        mutation: gql`
-          mutation JOIN_ROOM($id: uuid!, $userId: String!) {
-            room: update_picture_game(
-              where: { id: { _eq: $id } }
-              _set: { participant: $userId }
+      if (this.room.use_pass) {
+        console.log(sha256(this.pass))
+
+        const res = await this.$apollo.mutate({
+          mutation: gql`
+            mutation JOIN_ROOM_WITH_PASS(
+              $id: uuid!
+              $userId: String!
+              $pass: String!
             ) {
-              returning {
-                id
+              room: update_picture_game(
+                where: {
+                  _and: [{ id: { _eq: $id } }, { pass: { _eq: $pass } }]
+                }
+                _set: { participant: $userId }
+              ) {
+                returning {
+                  id
+                }
               }
             }
+          `,
+          variables: {
+            id: this.roomId,
+            userId: this.userId,
+            pass: sha256(this.pass)
           }
-        `,
-        variables: {
-          id: this.roomId,
-          userId: this.userId
+        })
+        if (!res.data.room.returning[0]) {
+          this.text = 'パスフレーズが違います。'
+          this.snackbar = true
         }
-      })
+      } else {
+        await this.$apollo.mutate({
+          mutation: gql`
+            mutation JOIN_ROOM_WITHOUT_PASS($id: uuid!, $userId: String!) {
+              room: update_picture_game(
+                where: { id: { _eq: $id } }
+                _set: { participant: $userId }
+              ) {
+                returning {
+                  id
+                }
+              }
+            }
+          `,
+          variables: {
+            id: this.roomId,
+            userId: this.userId
+          }
+        })
+      }
     } finally {
       this.loading = false
     }

@@ -62,18 +62,6 @@ const routes = [
     path: '/canvas',
     name: 'canvas',
     component: () => import('@/views/Canvas.vue')
-  },
-  {
-    path: '/kanban',
-    name: 'kanban',
-    component: () => import('@/views/Kanban.vue'),
-    meta: { requireAuth: true }
-  },
-  {
-    path: '/project/:id',
-    name: 'project',
-    component: () => import('@/views/Project.vue'),
-    meta: { requireAuth: true }
   }
 ]
 

@@ -1,48 +1,19 @@
 <template>
-  <div class="home">
-    <v-card class="mb-5">
-      <v-card-text>
-        <v-textarea outlined label="Memo" single-line v-model="content" />
-        <v-btn block @click="addMemo" color="primary">add Memo</v-btn>
-      </v-card-text>
-    </v-card>
-    <template v-if="memos && memos.length > 0">
-      <v-card v-for="memo in memos" :key="memo.id" class="mb-1">
-        <v-card-text>
-          {{ memo.content }}
-        </v-card-text>
-        <v-card-subtitle>{{ memo.created_at }}</v-card-subtitle>
-        <v-card-actions>
-          <v-spacer />
-          <v-icon @click="deleteMemo(memo.id)">mdi-delete</v-icon>
-        </v-card-actions>
-      </v-card>
-    </template>
+  <div class="home pa-8">
+    <p>メニューの中のピクトリンクから部屋を探してね！</p>
+    <p>
+      砂場メニューではペンの太さや色の変更、一人モードでお絵かきができるよ！
+    </p>
+    <p>
+      改善要望、修正依頼はこちらからお願いします！是非お待ちしてます！PR(プルリク、紹介)も大歓迎です！
+    </p>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 
-type Memo = {
-  id: number
-  content: string
-  created_at: string
-}
-
-type Data = {
-  content: string
-  memos: Memo[]
-}
-
 export default Vue.extend({
-  name: 'home',
-  data(): Data {
-    return {
-      content: '',
-      memos: []
-    }
-  },
-  methods: {}
+  name: 'home'
 })
 </script>
