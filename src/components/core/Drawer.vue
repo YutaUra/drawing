@@ -40,6 +40,11 @@
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
+        <v-list-item>
+          <v-list-item-action class="text-center">
+            <v-btn small @click="logout">ログアウト</v-btn>
+          </v-list-item-action>
+        </v-list-item>
       </v-list>
     </v-container>
   </v-navigation-drawer>
@@ -47,6 +52,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { auth } from '@/plugins/firebase'
 
 export default Vue.extend({
   name: 'Drawer',
@@ -102,6 +108,12 @@ export default Vue.extend({
       set(v: boolean) {
         this.$emit('change', v)
       }
+    }
+  },
+  methods: {
+    async logout() {
+      await auth.signOut()
+      await this.$router.push({ name: 'home' })
     }
   }
 })

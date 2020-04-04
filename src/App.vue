@@ -9,7 +9,7 @@
       <v-spacer></v-spacer>
       <template v-if="isLogin">
         <span v-if="isLogin">{{ user.displayName || user.email }}さん</span>
-        <v-btn outlined v-if="isLogin" @click="logout">Logout</v-btn>
+        <!-- <v-btn outlined v-if="isLogin" @click="logout">Logout</v-btn> -->
       </template>
     </v-app-bar>
     <v-content>
@@ -35,7 +35,7 @@ export default Vue.extend({
   methods: {
     async logout() {
       await auth.signOut()
-      await this.$router.push('/login')
+      await this.$router.push({ name: 'home' })
     }
   },
   computed: {
